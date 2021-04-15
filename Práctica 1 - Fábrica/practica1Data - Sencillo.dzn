@@ -1,0 +1,54 @@
+%datafile
+
+D = 10;
+T = 10;
+MaxDT = 9;
+MaxDL = 5;
+MinDT = 2;
+
+N1 = 2;
+N2 = 2;
+N3 = 2;
+
+A = 1;
+
+Afinidad = [| false,true,true,true,true,true,true,true,true,true
+            | true,false,true,true,true,true,true,true,true,true
+            | true,true,false,true,true,true,true,true,true,true
+            | true,true,true,false,true,true,true,true,true,true
+            | true,true,true,true,false,true,true,true,true,true
+            | true,true,true,true,true,false,true,true,true,true
+            | true,true,true,true,true,true,false,true,true,true
+            | true,true,true,true,true,true,true,false,true,true
+            | true,true,true,true,true,true,true,true,false,true
+            | true,true,true,true,true,true,true,true,true,false|];
+            
+C = 2;
+
+Categorias = [1, 1, 1, 1, 1, 2, 2, 2, 2, 2];
+
+MinTC = [1, 1, 1, 1, 1, 1];
+
+diasLibres = [| true, false, false, false, false, true, false, false, true, false
+              | false, true, false, false, false, false, false, false, false, false
+              | false, false, true, false, false, false, false, false, false, false
+              | false, false, false, true, false, false, false, false, true, false
+              | true, false, false, false, true, false, false, false, false, false
+              | false, false, false, false, false, true, false, false, true, false
+              | false, false, false, false, false, false, true, false, false, false
+              | true, true, false, false, false, false, false, true, false, false
+              | false, false, false, false, false, false, false, false, true, false
+              | false, true, false, false, false, false, false, false, false, true
+              |];
+              
+turnosNoDeseados = [| L1, T1, L1, L1, L1, L1, L1, L1, L1, L1
+                    | T3, L1, T2, L1, L1, L1, L1, L1, L1, T3
+                    | L1, L1, L1, T1, L1, L1, L1, L1, L1, L1
+                    | L1, L1, L1, L1, T2, L1, L1, L1, L1, L1
+                    | L1, L1, L1, L1, L1, T1, L1, L1, L1, L1
+                    | T3, L1, L1, L1, L1, L1, T2, L1, L1, L1
+                    | L1, L1, L1, L1, L1, L1, L1, T1, L1, L1
+                    | L1, L1, L1, L1, T3, L1, L1, L1, T2, L1
+                    | L1, L1, L1, L1, L1, L1, L1, T3, L1, T1
+                    | T2, L1, T3, L1, L1, L1, L1, L1, L1, L1
+                    |];
