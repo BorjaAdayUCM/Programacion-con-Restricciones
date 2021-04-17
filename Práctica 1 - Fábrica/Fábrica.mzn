@@ -37,15 +37,23 @@ array[1..T,1..D] of bool: diasLibres;
 %Matriz de turnos no deseados.
 array[1..T,1..D] of Turnos: turnosNoDeseados;
 
+%Asserts
+constraint assert(D > 0, "Los días a organizar deben ser mayor que 0.");
+constraint assert(T > N1 + N2 + N3, "No hay trabajadores suficientes para todos los turnos de un día.");
+constraint assert(N1 > A /\ N2 > A /\ N3 > A, "Algún turno necesita más trabajadores para poder cumplir la restricción de afinidad.");
+constraint forall(c in 1..C, t in 1..3)(assert(sum(j in 1..T)(Categorias[j] = c) > MinTC[C*(t-1) + c], "No hay suficientes trabajadores de la categoría \(c) para los turnos \(t)."));
+
+
+
 %Cada turno tiene el número de trabajadores (N1, N2 o N3) que le corresponde.
-constraint forall(i in 1..D)(count(sol[1..T,i], T1) = N1 /\ count(sol[1..T,i], T2) = N2 /\ count(sol[1..T,i], T3) = N3);
+constraint forall(i in 1..D)(sum(j in 1..T)(bool2int(sol[j,i] = T1)) = N1);
+constraint forall(i in 1..D)(sum(j in 1..T)(bool2int(sol[j,i] = T2)) = N2);
+constraint forall(i in 1..D)(sum(j in 1..T)(bool2int(sol[j,i] = T3)) = N3);
 
 %Un trabajador solo puede trabajar un turno cada día.
 %Esta restricción se cumple siempre por la forma en la que representamos el problema.
 
 %Un trabajador no trabaja MaxDT días seguidos.
-%constraint forall(i in 1..T, j in 1..D - (MaxDT - 1))(count(sol[i,j..j + (MaxDT - 1)], T1) + count(sol[i,j..j + (MaxDT - 1)], T2) + count(sol[i,j..j + (MaxDT - 1)], T3) < MaxDT);
-
 constraint forall(i in 1..T, j in 1..D - (MaxDT - 1))(sum(k in j..j + (MaxDT - 1))(bool2int(sol[i,k] != L1)) < MaxDT);
 
 %Un trabajador no libra MaxDL días seguidos. (Los días libres que se pide cuentan como trabajados).
@@ -61,11 +69,9 @@ constraint forall(i in 1..T, j in 1..D - 3)((sol[i,j] = T3 /\ sol[i,j + 1] = T1 
 constraint forall(i in 1..D, j in 1..T where sol[j, i] != L1)(sum(k in 1..T where j != k /\ sol[j, i] = sol[k, i])(Afinidad[j,k]) >= A);
 
 %En cada turno hay mínimo un trbajador de cada categoría.
-constraint forall(i in 1..D, turno in Turnos[1..3], c in 1..C)(sum(j in 1..T)(bool2int(sol[j, i] = turno /\ Categorias[j] = c)) >= MinTC[C*(turno - 1) + c]);
-
-%constraint forall(i in 1..D, c in 1..C)(sum(j in 1..T where sol[j, i] = T1 /\ Categorias[j] = c)(1) >= MinTC[c]);
-%constraint forall(i in 1..D, c in 1..C)(sum(j in 1..T where sol[j, i] = T2 /\ Categorias[j] = c)(1) >= MinTC[C*1 + c]);
-%constraint forall(i in 1..D, c in 1..C)(sum(j in 1..T where sol[j, i] = T3 /\ Categorias[j] = c)(1) >= MinTC[C*2 + c]);
+constraint forall(i in 1..D, c in 1..C)(sum(j in 1..T)(bool2int(sol[j, i] = T1 /\ Categorias[j] = c)) >= MinTC[c]);
+constraint forall(i in 1..D, c in 1..C)(sum(j in 1..T)(bool2int(sol[j, i] = T2 /\ Categorias[j] = c)) >= MinTC[C*1 + c]);
+constraint forall(i in 1..D, c in 1..C)(sum(j in 1..T)(bool2int(sol[j, i] = T3 /\ Categorias[j] = c)) >= MinTC[C*2 + c]);
 
 
 
