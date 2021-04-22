@@ -33,10 +33,16 @@ array[1..T] of 1..C: Categorias;
 array[1..3*C] of int: MinTC;
 
 %Matriz de días libres.
-array[1..T,1..D] of bool: diasLibres;
+array[1..T,1..D] of bool: DiasLibres;
 
 %Matriz de turnos no deseados.
-array[1..T,1..D] of Turnos: turnosNoDeseados;
+array[1..T,1..D] of Turnos: TurnosNoDeseados;
+
+%Asserts
+constraint assert(D > 0, "Los días a organizar deben ser mayor que 0.");
+constraint assert(T > N1 + N2 + N3, "No hay trabajadores suficientes para todos los turnos de un día.");
+constraint assert(N1 > A /\ N2 > A /\ N3 > A, "Algún turno necesita más trabajadores para poder cumplir la restricción de afinidad.");
+constraint forall(c in 1..C, t in 1..3)(assert(sum(j in 1..T)(Categorias[j] = c) > MinTC[C*(t-1) + c], "No hay suficientes trabajadores de la categoría \(c) para los turnos \(t)."));
 
 %Variable auxiliar.
 constraint forall(i in 1..D)(TrabajadoresDia[i] = sol[1,i] union sol[2,i] union sol[3,i]);
@@ -51,10 +57,10 @@ constraint forall(i in 1..D, t1 in 1..3, t2 in 1..3 where t1 != t2)(sol[t1,i] in
 constraint forall(i in 1..D - (MaxDT - 1))(array_intersect(TrabajadoresDia[i..i + (MaxDT - 1)]) = {});
 
 %Un trabajador no libra MaxDL días seguidos. (Los días libres que se pide cuentan como trabajados).
-constraint forall(i in 1..T, j in 1..D - (MaxDL - 1))(sum(k in j..j + (MaxDL - 1))(bool2int((not (i in TrabajadoresDia[k])) /\ not diasLibres[i,k])) < MaxDL);
+constraint forall(i in 1..T, j in 1..D - (MaxDL - 1))(sum(k in j..j + (MaxDL - 1))(bool2int((not (i in TrabajadoresDia[k])) /\ not DiasLibres[i,k])) < MaxDL);
 
 %Un trabajador trabaja como mínimo MinDT días. (Los días libres que se pide cuentan como trabajados).
-constraint forall(i in 1..T)(sum(j in 1..D)(bool2int((i in TrabajadoresDia[j]) \/ diasLibres[i,j])) >= MinDT);
+constraint forall(i in 1..T)(sum(j in 1..D)(bool2int((i in TrabajadoresDia[j]) \/ DiasLibres[i,j])) >= MinDT);
 
 %Un trabajador no puede hacer el último turno de un día y el primero del día siguiente dos veces consecutivas.
 constraint forall(i in 1..T, j in 1..D - 3)((i in sol[3,j] /\ i in sol[1,j + 1] /\ i in sol[3,j + 2]) -> not (i in sol[1,j + 3]));
@@ -71,14 +77,14 @@ constraint forall(i in 1..D, c in 1..C)(sum(j in 1..T)(bool2int(j in sol[3, i] /
 /***************PROBLEMA DE SATISFACCIÓN***************/
 
 %Los trabajadores no trabajan los turnos que han pedido no trabajar.
-constraint forall(i in 1..T, j in 1..D)((turnosNoDeseados[i,j] = T1) -> (not (i in sol[1,j])));
-constraint forall(i in 1..T, j in 1..D)((turnosNoDeseados[i,j] = T2) -> (not (i in sol[2,j])));
-constraint forall(i in 1..T, j in 1..D)((turnosNoDeseados[i,j] = T3) -> (not (i in sol[3,j])));
+%constraint forall(i in 1..T, j in 1..D)((TurnosNoDeseados[i,j] = T1) -> (not (i in sol[1,j])));
+%constraint forall(i in 1..T, j in 1..D)((TurnosNoDeseados[i,j] = T2) -> (not (i in sol[2,j])));
+%constraint forall(i in 1..T, j in 1..D)((TurnosNoDeseados[i,j] = T3) -> (not (i in sol[3,j])));
 
 %Los trabajadores libran los días que han pedido.
-constraint forall(i in 1..T, j in 1..D)(diasLibres[i,j] -> not (i in TrabajadoresDia[j]));
+%constraint forall(i in 1..T, j in 1..D)(DiasLibres[i,j] -> not (i in TrabajadoresDia[j]));
 
-solve satisfy;
+%solve satisfy;
 
 /******************************************************/
 
@@ -91,13 +97,13 @@ solve satisfy;
 /***************PROBLEMA DE OPTIMIZACIÓN***************/
 
 %Minimiza el número de días libres pedidos no concedidos.
-%solve minimize sum(i in 1..D, j in 1..T)(bool2int(diasLibres[j,i] /\ j in TrabajadoresDia[i]));
+%solve minimize sum(i in 1..D, j in 1..T)(bool2int(DiasLibres[j,i] /\ j in TrabajadoresDia[i]));
 
 %Minimiza el número de turnos no deseados pedidos no concedidos.
-%solve minimize sum(i in 1..D, j in 1..T)(bool2int((turnosNoDeseados[j,i] = T1 /\ j in sol[1,i]) \/ (turnosNoDeseados[j,i] = T2 /\ j in sol[2,i]) \/ (turnosNoDeseados[j,i] = T3 /\ j in sol[3,i])) );
+%solve minimize sum(i in 1..D, j in 1..T)(bool2int((TurnosNoDeseados[j,i] = T1 /\ j in sol[1,i]) \/ (TurnosNoDeseados[j,i] = T2 /\ j in sol[2,i]) \/ (TurnosNoDeseados[j,i] = T3 /\ j in sol[3,i])) );
 
 %Minimiza el número de días libres pedidos y turnos no deseados no concedidos.
-%solve minimize sum(i in 1..D, j in 1..T)(bool2int(diasLibres[j,i] /\ j in TrabajadoresDia[i]) + bool2int((turnosNoDeseados[j,i] = T1 /\ j in sol[1,i]) \/ (turnosNoDeseados[j,i] = T2 /\ j in sol[2,i]) \/ (turnosNoDeseados[j,i] = T3 /\ j in sol[3,i])));
+solve minimize sum(i in 1..D, j in 1..T)(bool2int(DiasLibres[j,i] /\ j in TrabajadoresDia[i]) + bool2int((TurnosNoDeseados[j,i] = T1 /\ j in sol[1,i]) \/ (TurnosNoDeseados[j,i] = T2 /\ j in sol[2,i]) \/ (TurnosNoDeseados[j,i] = T3 /\ j in sol[3,i])));
 
 /******************************************************/
 

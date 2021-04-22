@@ -29,7 +29,7 @@ Categorias = [1, 1, 1, 1, 1, 2, 2, 2, 2, 2];
 
 MinTC = [1, 1, 1, 1, 1, 1];
 
-diasLibres = [| true, false, false, false, false, true, false, false, true, false
+DiasLibres = [| true, false, false, false, false, true, false, false, true, false
               | false, true, false, false, false, false, false, false, false, false
               | false, false, true, false, false, false, false, false, false, false
               | false, false, false, true, false, false, false, false, true, false
@@ -41,7 +41,7 @@ diasLibres = [| true, false, false, false, false, true, false, false, true, fals
               | false, true, false, false, false, false, false, false, false, true
               |];
               
-turnosNoDeseados = [| L1, T1, L1, L1, L1, T2, L1, L1, L1, L1
+TurnosNoDeseados = [| L1, T1, L1, L1, L1, T2, L1, L1, L1, L1
                     | T3, L1, T2, L1, L1, L1, L1, T1, L1, T3
                     | L1, L1, L1, T1, L1, L1, L1, L1, L1, L1
                     | L1, L1, L1, L1, T2, L1, L1, L1, L1, L1
