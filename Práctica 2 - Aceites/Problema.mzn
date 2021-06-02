@@ -67,10 +67,10 @@ constraint beneficio = sum(i in 1..meses, j in 1..NAceites)(refinado[i, j]) * VA
 constraint forall(i in 1..meses)(sum(j in 1..NAceites)(bool2int(refinado[i, j] > 0)) <= K);
 
 %Si un aceite es usado, debe usarse más de T toneladas.
-%constraint forall(i in 1..meses, j in 1..NAceites where refinado[i, j] > 0)(refinado[i, j] > 0 -> refinado[i, j] >= T);
+constraint forall(i in 1..meses, j in 1..NAceites)(refinado[i, j] > 0 -> refinado[i, j] >= T);
 
-%Si usamos usamos un aceite marcado con un 1 entonces debemos usar todos los acites marcados con un 2.
-%constraint forall(i in 1..meses, j in 1..NAceites)(refinado[i, j] > 0 -> forall(k in 1..NAceites)(aceitesAUsar[j, k] = 1 -> refinado[i, k] > 0));
+%Cumplimos las restricciones de uso de aceites.
+constraint forall(i in 1..meses, j in 1..NAceites, k in 1..NAceites)(refinado[i, j] > 0 /\ aceitesAUsar[j, k] = 1 -> refinado[i, k] > 0);
 
 constraint beneficio >= MinB;
 

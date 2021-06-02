@@ -1,7 +1,7 @@
 2
 3
 6
-2
+3
 45
 110 120 130 110 115
 130 130 110 90 115
@@ -18,5 +18,9 @@
 6.0
 8.8 6.1 2.0 4.2 5.0
 11 3 7 9 12
-1 1 0 0 2
+False False False False True
+False False False False True
+False False False False False
+False False False False False
+False False False False False
 100000

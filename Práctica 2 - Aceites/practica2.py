@@ -38,10 +38,12 @@ restanteFinal = []
 for i in range(len(restanteFinal1)):
     restanteFinal.append(int(restanteFinal1[i]))
 
-aceitesAUsar1 = input().split()
 aceitesAUsar = []
-for i in range(len(aceitesAUsar1)):
-    aceitesAUsar.append(int(aceitesAUsar1[i]))
+for i in range(NAceites):
+    aceitesAUsar1 = input().split()
+    aceitesAUsar.append([])
+    for j in range(len(aceitesAUsar1)):
+        aceitesAUsar[i].append(bool(aceitesAUsar1[j] == "True"))
 
 MinB = int(input())
 
@@ -69,6 +71,8 @@ def addor(a1,a2):
     return "(or "+a1+" "+a2+" )"
 def addnot(a):
     return "(not "+a+" )"
+def addimplies(a1,a2):
+    return "(=> "+a1+" "+a2+" )"
 
 def addexists(a):
     if len(a) == 0:
@@ -101,6 +105,9 @@ def addmul(a1, a2):
 
 def addassert(a):
     return "(assert "+a+" )"
+
+def addassertsoft(a):
+    return "(assert-soft "+a+" )"
 
 def addmaximize(a):
     return "(maximize "+a+" )"
@@ -224,7 +231,24 @@ for i in range(meses):
     sumUsados = []
     for j in range(NAceites):
         sumUsados.append(bool2int(addgt(refinado(i,j), str(0))))
-    print(addassert(addle(addsum(sumUsados), str(K))))
+    print(addassertsoft(addle(addsum(sumUsados), str(K))))
+
+
+#Si un aceite es usado, debe usarse más de T toneladas.
+#constraint forall(i in 1..meses, j in 1..NAceites)(refinado[i, j] > 0 -> refinado[i, j] >= T);
+for i in range(meses):
+    for j in range(NAceites):
+        print(addassertsoft(addimplies(addgt(refinado(i,j), str(0)), addge(refinado(i, j), str(T)))))
+
+#Deben cumplirse las restricciones de uso de aceites.
+#constraint forall(i in 1..meses, j in 1..NAceites, k in 1..NAceites)(refinado[i, j] > 0 /\ aceitesAUsar[j, k] = 1 -> refinado[i, k] > 0);
+for i in range(meses):
+    for j in range(NAceites):
+        for k in range(NAceites):
+            if(aceitesAUsar[j][k]):
+                print(addassertsoft(addimplies(addgt(refinado(i, j), str(0)), addgt(refinado(i, k), str(0)))))
+
+
 
 #Optimizacion
 print(addmaximize(beneficio()))
