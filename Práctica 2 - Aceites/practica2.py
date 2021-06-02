@@ -20,11 +20,18 @@ for i in range(meses):
     for j in range(len(precios1)):
         precios[i].append(int(precios1[j]))
 
+preciosMensual1 = input().split()
+preciosMensual = []
+for i in range(len(preciosMensual1)):
+    preciosMensual.append(int(preciosMensual1[i]))
+
 VALOR = int(input())
 MAXV = int(input())
 MAXN = int(input())
 MCAP = int(input())
+MCAPR = int(input())
 CA = int(input())
+CAR = int(input())
 MinD = int(float(input())*10)
 MaxD = int(float(input())*10)
 
@@ -52,6 +59,9 @@ def compras(i, j):
 
 def refinado(i, j):
     return "refinado_"+str(i)+"_"+str(j)
+
+def ventas(i):
+    return "venta_"+str(i)
 
 def beneficio():
     return "beneficio"
@@ -138,6 +148,7 @@ print(setlogic("QF_LIA"))
 #declaración de variables de la solución
 print(intvar(beneficio()))
 for i in range(meses):
+    print(intvar(ventas(i)))
     for j in range(NAceites):
         print(intvar(compras(i, j)))
         print(intvar(refinado(i, j)))
@@ -204,23 +215,39 @@ for i in range(meses):
 
 
 
-#Alcanzamos el beneficio mínimo. (Suponemos el almacenaje de julio no cuesta dinero)
-#constraint sum(i in 1..meses, j in 1..NAceites)(refinado[i, j] * VALOR)
-#           - sum(i in 1..meses, j in 1..NAceites)(compras[i, j] * precios[i, j]) 
-#           - sum(i in 1..meses, j in 1..NAceites)((compras[i, j] + if i = 0 then 0 else sum(k in 0..i-1)(compras[k, j] - refinado[k, j]) endif) * CA
-#           >= MinB;
 
+
+
+
+#beneficio = sum(i in 1..meses)(ventaMensual[i] * preciosMensual[i]) 
+#            - sum(i in 1..meses, j in 1..NAceites)(compras[i, j] * precios[i, j]) 
+#            - sum(i in 1..meses, j in 1..NAceites)(compras[i, j] + restanteMes(compras, refinado, i - 1, j)) * CA 
+#           - sum(i in 1..meses)(restanteMesRefinado(refinado, ventaMensual, i - 1)) * CAR;
+
+######################################################################################
 sumVentas = []
 sumCompras = []
 sumCostes = []
+sumCostesR = []
+sumVT = []
+sumRT = []
+
 for i in range(meses):
+    sumVentas.append(addmul(ventas(i), str(preciosMensual[i])))
     for j in range(NAceites):
-        sumVentas.append(addmul(refinado(i, j), str(VALOR)))
         sumCompras.append(addmul(compras(i, j), str(precios[i][j])))
         sumCostes.append(compras(i, j))
         for k in range(i):
             sumCostes.append(addless(compras(k,j), refinado(k, j)))
-print(addassert(addeq(beneficio(), addless(addsum(sumVentas), addplus(addsum(sumCompras), addmul(addsum(sumCostes), str(CA)))))))
+            sumVT.append(ventas(k))
+            for l in range(NAceites):
+                sumRT.append(refinado(k, l))
+    sumCostesR.append(addless(addsum(sumVT), addsum(sumRT)))
+print(addassert(addeq(beneficio(), addless(addsum(sumVentas), addplus(addsum(sumCompras), addplus(addmul(addsum(sumCostes), str(CA)), addmul(addsum(sumCostesR), str(CAR))))))))
+###########################################################################################
+
+
+
 
 #Beneficio minimo
 print(addassert(addge(beneficio(), str(MinB))))
@@ -250,6 +277,40 @@ for i in range(meses):
 
 
 
+
+
+
+##############################################################################
+
+#No puedo vender a final de mes más de lo que tengo refinado.
+#constraint forall(i in 1..meses)(ventaMensual[i] <= sum(j in 1..NAceites)(refinado[i, j]) + restanteMesRefinado(refinado, ventaMensual, i - 1));
+for i in range(meses):
+    sumR = []
+    sumRT = []
+    sumVT = []
+    for l in range(NAceites):
+        sumR.append(refinado(i, l))
+    for j in range(i):
+        sumVT.append(ventas(j))
+        for k in range(NAceites): 
+            sumRT.append(refinado(j, k))
+    print(addassert(addle(ventas(i), addplus(addsum(sumR), addless(addsum(sumRT), addsum(sumVT))))))
+
+#El almacén de aceite refinado no puede superar MCAPR toneladas.
+#constraint forall(i in 1..meses)(restanteMesRefinado(refinado, ventaMensual, i) <= MCAPR);
+for i in range(meses):
+    sumRT = []
+    sumVT = []
+    for j in range(i):
+        sumVT.append(ventas(j))
+        for k in range(NAceites): 
+            sumRT.append(refinado(j, k))
+    print(addassert(addle(addless(addsum(sumRT), addsum(sumVT)), str(MCAPR))))
+
+########################################################################################################
+
+
+
 #Optimizacion
 print(addmaximize(beneficio()))
 
@@ -263,4 +324,6 @@ for i in range(meses):
 for i in range(meses):
     for j in range(NAceites):
         getvalue("("+refinado(i, j)+")")
+for i in range(meses):
+    getvalue("("+ventas(i)+")")
 exit(0)
