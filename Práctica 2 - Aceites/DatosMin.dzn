@@ -1,0 +1,38 @@
+%datafile
+
+NAceitesVegetales = 1;
+NAceitesNoVegetales = 1;
+
+meses = 6;
+
+K = 2;
+
+T = 45;
+
+precios = [| 11, 12
+           | 13, 13
+           | 11, 14
+           | 12, 11
+           | 10, 12
+           | 9, 10  |];
+
+VALOR = 100;
+
+MAXV = 10;
+MAXN = 20;
+
+MCAP = 100;
+
+CA = 1;
+
+MinD = 3.0;
+MaxD = 6.0;
+
+durezas = [4.0, 4.0];
+
+restanteFinal = [2, 2];
+
+%Si se usa algún aceite con un 1, se deben usar los aceites con el 2.
+aceitesAUsar = [1,1];
+
+MinB = 10;
