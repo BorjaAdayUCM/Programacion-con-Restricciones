@@ -7,7 +7,7 @@ meses = 6;
 
 K = 3;
 
-T = 45;
+T = 48;
 
 precios = [| 110, 120, 130, 110, 115
            | 130, 130, 110, 90, 115
@@ -16,16 +16,16 @@ precios = [| 110, 120, 130, 110, 115
            | 100, 120, 150, 110, 105
            | 90, 100, 140, 80, 135 |];
 
-preciosMensual = [150, 150, 300, 150, 150, 300];
+preciosMensual = [150, 120, 130, 180, 20, 160];
 
 MAXV = 200;
 MAXN = 250;
 
 MCAP = 1000;
-MCAPR = 50;
+MCAPR = 33;
 
 CA = 2;
-CAR = 3;
+CAR = 4;
 
 MinD = 3.0;
 MaxD = 6.0;
@@ -40,4 +40,4 @@ aceitesAUsar = [| false, false, false, false, true
                 | false, false, false, false, false
                 | false, false, false, false, false |];
 
-MinB = 100000;
+MinB = 90000;

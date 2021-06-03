@@ -25,7 +25,6 @@ preciosMensual = []
 for i in range(len(preciosMensual1)):
     preciosMensual.append(int(preciosMensual1[i]))
 
-VALOR = int(input())
 MAXV = int(input())
 MAXN = int(input())
 MCAP = int(input())
@@ -154,8 +153,9 @@ for i in range(meses):
         print(intvar(refinado(i, j)))
 # fin declaración
 
-#No se puede comprar negativo ni refinar negativo.
+#No se puede comprar, refinar ni vender negativo.
 for i in range(meses):
+    print(addassert(addge(ventas(i), str(0))))
     for j in range(NAceites):
         print(addassert(addand(addge(compras(i,j), str(0)), addge(refinado(i,j), str(0)))))
 
@@ -234,15 +234,26 @@ sumRT = []
 
 for i in range(meses):
     sumVentas.append(addmul(ventas(i), str(preciosMensual[i])))
+
+for i in range(meses):
     for j in range(NAceites):
         sumCompras.append(addmul(compras(i, j), str(precios[i][j])))
+
+for i in range(meses):
+    for j in range(NAceites):
         sumCostes.append(compras(i, j))
         for k in range(i):
             sumCostes.append(addless(compras(k,j), refinado(k, j)))
-            sumVT.append(ventas(k))
-            for l in range(NAceites):
-                sumRT.append(refinado(k, l))
-    sumCostesR.append(addless(addsum(sumVT), addsum(sumRT)))
+
+sumCostesR = []
+for i in range(meses):
+    sumRT = []
+    sumVT = []
+    for j in range(i):
+        sumVT.append(ventas(j))
+        for k in range(NAceites): 
+            sumRT.append(refinado(j, k))
+    sumCostesR.append(addless(addsum(sumRT), addsum(sumVT)))
 print(addassert(addeq(beneficio(), addless(addsum(sumVentas), addplus(addsum(sumCompras), addplus(addmul(addsum(sumCostes), str(CA)), addmul(addsum(sumCostesR), str(CAR))))))))
 ###########################################################################################
 
