@@ -8,7 +8,7 @@
 110 140 130 100 95
 120 110 120 120 125
 100 120 150 110 105
-90 100 140 80 135
+90 100 140 80 135 
 150 120 130 180 20 160
 200
 250
@@ -20,9 +20,9 @@
 6.0
 8.8 6.1 2.0 4.2 5.0
 11 3 7 9 12
-False False False False True
-False False False False True
-False False False False False
-False False False False False
-False False False False False
+false false false false true
+false false false false true
+false false false false false
+false false false false false
+false false false false false 
 90000

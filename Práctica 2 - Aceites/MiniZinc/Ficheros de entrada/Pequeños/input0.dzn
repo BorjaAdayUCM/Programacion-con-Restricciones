@@ -1,0 +1,43 @@
+%datafile
+
+NAceitesVegetales = 2;
+NAceitesNoVegetales = 3;
+
+Meses = 6;
+
+K = 3;
+
+T = 50;
+
+Precios = [| 60, 120, 90, 110, 200
+           | 130, 130, 110, 90, 115
+           | 110, 190, 80, 100, 95
+           | 120, 110, 160, 120, 125
+           | 100, 80, 150, 110, 105
+           | 90, 60, 140, 80, 155 |];
+
+PreciosMensual = [70, 130, 80, 180, 20, 150];
+
+MAXV = 150;
+MAXN = 200;
+
+MCAP = 1000;
+MCAPR = 20;
+
+CA = 5;
+CAR = 10;
+
+MinD = 4.5;
+MaxD = 5.5;
+
+Durezas = [8.8, 6.1, 2.0, 4.2, 5.0];
+
+RestanteFinal = [11, 10, 15, 9, 12];
+
+AceitesAUsar = [| false, false, false, false, true
+                | false, false, false, false, true
+                | false, false, false, false, false
+                | false, true, false, false, false
+                | false, false, true, false, false |];
+
+MinB = 60000;

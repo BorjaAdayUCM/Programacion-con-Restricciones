@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import sys
-
+sys.setrecursionlimit(100000)
 # altura : altura de la torre
 # disp : piezas disponibles
 # Colores: Azul = 0, Rojo = 1 , Verde = 2;
@@ -33,7 +33,6 @@ CA = int(input())
 CAR = int(input())
 MinD = int(float(input())*10)
 MaxD = int(float(input())*10)
-
 durezas1 = input().split()
 durezas = []
 for i in range(len(durezas1)):
@@ -49,8 +48,7 @@ for i in range(NAceites):
     aceitesAUsar1 = input().split()
     aceitesAUsar.append([])
     for j in range(len(aceitesAUsar1)):
-        aceitesAUsar[i].append(bool(aceitesAUsar1[j] == "True"))
-
+        aceitesAUsar[i].append(bool(aceitesAUsar1[j] == "true"))
 MinB = int(input())
 
 def compras(i, j):
@@ -209,8 +207,10 @@ for i in range(meses):
     for j in range(NAceites):
         sumA.append(addmul(refinado(i, j), str(durezas[j])))
         sumB.append(refinado(i, j))
-    c1 = addle(addsum(sumA), addmul(str(MaxD), addsum(sumB)))
-    c2 = addge(addsum(sumA), addmul(str(MinD), addsum(sumB)))
+    sumAAux = addsum(sumA)
+    sumBAux = addsum(sumB)
+    c1 = addle(sumAAux, addmul(str(MaxD), sumBAux))
+    c2 = addge(sumAAux, addmul(str(MinD), sumBAux))
     print(addassert(addand(c1, c2)))
 
 
